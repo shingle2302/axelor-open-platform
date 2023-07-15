@@ -67,8 +67,11 @@ public class AppServletModule extends ServletModule {
   }
 
   protected List<? extends Module> getModules() {
+    //创建AuthModule
     final AuthModule authModule = new AuthModule(getServletContext());
+    //创建AppModule
     final AppModule appModule = new AppModule();
+    //创建SchedulerModule
     final SchedulerModule schedulerModule = new SchedulerModule();
     return Arrays.asList(authModule, appModule, schedulerModule);
   }
@@ -78,18 +81,25 @@ public class AppServletModule extends ServletModule {
     serve("__init__").with(AppStartup.class);
   }
 
+
+  /**
+   * 配置Servlets
+   */
   @Override
   protected void configureServlets() {
-
+    // 绑定ObjectMapper
     // some common bindings
     bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class);
 
+    // 初始化JPA模块
     // initialize JPA
     install(new JpaModule(jpaUnit, true, false));
 
+    // 初始化WebSocket模块
     // WebSocket
     install(new WebSocketModule());
 
+    // 初始化过滤器
     // trick to ensure PersistFilter is registered before anything else
     install(
         new ServletModule() {
@@ -110,6 +120,7 @@ public class AppServletModule extends ServletModule {
           }
         });
 
+    // 初始化AuthModule、AppModule、SchedulerModule
     // install additional modules
     for (Module module : getModules()) {
       install(module);
@@ -121,6 +132,7 @@ public class AppServletModule extends ServletModule {
     // i18n bundle
     serve("/js/messages.js").with(I18nServlet.class);
 
+    // 绑定拦截器
     // intercept all response methods
     bindInterceptor(
         Matchers.any(),

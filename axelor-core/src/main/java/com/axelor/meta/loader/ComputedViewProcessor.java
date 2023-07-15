@@ -66,6 +66,16 @@ public class ComputedViewProcessor {
     this.processor = new ComputedViewXmlProcessor(baseView, extendsViews);
   }
 
+
+  /**
+   * 计算视图并保存
+   * @return
+   * @throws JAXBException
+   * @throws ParserConfigurationException
+   * @throws IOException
+   * @throws SAXException
+   * @throws XPathExpressionException
+   */
   public MetaView compute()
       throws JAXBException, ParserConfigurationException, IOException, SAXException,
           XPathExpressionException {

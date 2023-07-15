@@ -36,8 +36,19 @@ import java.util.stream.Collectors;
 
 abstract class AbstractParallelLoader extends AbstractLoader {
 
+  /**
+   * 查找元数据文件
+   * @param module
+   * @return
+   */
   protected abstract List<URL> findFiles(Module module);
 
+  /**
+   * 加载元数据文件
+   * @param file
+   * @param module
+   * @param update
+   */
   protected abstract void doLoad(URL file, Module module, boolean update);
 
   @Override

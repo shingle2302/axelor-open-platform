@@ -50,6 +50,10 @@ public class AppStartup extends HttpServlet {
 
   @Inject private Event<ShutdownEvent> shutdownEvent;
 
+  /**
+   * 模块管理初始化
+   * @throws ServletException
+   */
   @Override
   public void init() throws ServletException {
     log.info("Initializing...");

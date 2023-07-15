@@ -51,6 +51,7 @@ public class ModuleManager {
 
   private static final Logger log = LoggerFactory.getLogger(ModuleManager.class);
 
+  //扫描所有模块
   private static final ModuleResolver RESOLVER = ModuleResolver.scan();
 
   private boolean loadData = true;
@@ -91,13 +92,16 @@ public class ModuleManager {
 
   public void initialize(final boolean update, final boolean withDemo) {
     try {
+      //初始化用户admin和用户组users、admins
       createUsers();
+      //保存解析到的模块
       resolve(update);
       final List<Module> moduleList =
           RESOLVER.all().stream()
               .peek(m -> log.info("Loading package {}...", m.getName()))
               .filter(Module::isPending)
               .collect(Collectors.toList());
+      //加载所有模块
       loadModules(moduleList, update, withDemo);
     } finally {
       encryptPasswords();
@@ -157,13 +161,17 @@ public class ModuleManager {
     }
   }
 
+  //加载所有模块
   private void loadModules(List<Module> moduleList, boolean update, boolean withDemo) {
     Beans.get(AuditableRunner.class)
         .run(
             () -> {
+              //异步初始化每个模块
               moduleList.forEach(m -> installOne(m.getName(), update, withDemo));
+              //异步初始化每个模块视图
               moduleList.forEach(m -> viewLoader.doLast(m, update));
             });
+    //生成最终视图
     viewLoader.terminate(update);
   }
 
@@ -213,6 +221,7 @@ public class ModuleManager {
         module.isInstalled() ? "Updating package {}..." : "Installing package {}...";
     log.info(message, moduleName);
 
+    //加载元数据model, view i18n
     // load meta
     installMeta(module, update);
 

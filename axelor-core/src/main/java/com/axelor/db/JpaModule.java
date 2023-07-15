@@ -145,9 +145,11 @@ public class JpaModule extends AbstractModule {
       configureConnection(settings, properties);
     } catch (Exception e) {
     }
-
+    //初始化搜索模块
     install(new SearchModule());
+    //初始化租户模块
     install(new TenantModule());
+    //初始化持久化模块
     install(new JpaPersistModule(jpaUnit).properties(properties));
     if (this.autostart) {
       bind(Initializer.class).asEagerSingleton();
@@ -214,6 +216,12 @@ public class JpaModule extends AbstractModule {
     }
   }
 
+
+  /**
+   * 配置搜索模块
+   * @param settings
+   * @param properties
+   */
   private void configureSearch(final AppSettings settings, final Properties properties) {
     // hibernate-search support
     if (!SearchModule.isEnabled()) {

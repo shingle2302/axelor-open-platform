@@ -107,6 +107,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 @RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+//路径变量model
 @Path("/rest/{model}")
 public class RestService extends ResourceService {
 
@@ -123,6 +124,12 @@ public class RestService extends ResourceService {
     return response.fail("invalid request");
   }
 
+  /**
+   * 查询
+   * @param limit
+   * @param offset
+   * @return
+   */
   @GET
   public Response find(
       @QueryParam("limit") @DefaultValue("40") int limit,
@@ -150,6 +157,11 @@ public class RestService extends ResourceService {
     ViewService.updateContext(action, old);
   }
 
+  /**
+   * 查询
+   * @param request
+   * @return
+   */
   @POST
   @Path("search")
   public Response find(Request request) {
@@ -160,11 +172,18 @@ public class RestService extends ResourceService {
     }
 
     request.setModel(getModel());
+    //更新上下文
     updateContext(request);
 
     return getResource().search(request);
   }
 
+
+  /**
+   * 保存
+   * @param request
+   * @return
+   */
   @POST
   public Response save(Request request) {
     if (request == null || (isEmpty(request.getRecords()) && isEmpty(request.getData()))) {
@@ -174,11 +193,22 @@ public class RestService extends ResourceService {
     return getResource().save(request);
   }
 
+
+  /**
+   * 新建
+   * @param request
+   * @return
+   */
   @PUT
   public Response create(Request request) {
     return save(request);
   }
 
+  /**
+   * 详情
+   * @param id
+   * @return
+   */
   @GET
   @Path("{id}")
   public Response read(@PathParam("id") long id) {
@@ -235,6 +265,12 @@ public class RestService extends ResourceService {
     return null;
   }
 
+  /**
+   * 更新
+   * @param id
+   * @param request
+   * @return
+   */
   @POST
   @Path("{id}")
   public Response update(@PathParam("id") long id, Request request) {
@@ -263,6 +299,13 @@ public class RestService extends ResourceService {
     return getResource().updateMass(request);
   }
 
+
+  /**
+   * 删除
+   * @param id
+   * @param version
+   * @return
+   */
   @DELETE
   @Path("{id}")
   public Response delete(@PathParam("id") long id, @QueryParam("version") int version) {
@@ -272,6 +315,12 @@ public class RestService extends ResourceService {
     return getResource().remove(id, request);
   }
 
+  /**
+   * 移除
+   * @param id
+   * @param request
+   * @return
+   */
   @POST
   @Path("{id}/remove")
   public Response remove(@PathParam("id") long id, Request request) {
@@ -282,6 +331,11 @@ public class RestService extends ResourceService {
     return getResource().remove(id, request);
   }
 
+  /**
+   * 移除所有
+   * @param request
+   * @return
+   */
   @POST
   @Path("removeAll")
   public Response remove(Request request) {
@@ -323,6 +377,12 @@ public class RestService extends ResourceService {
     in.close();
   }
 
+  /**
+   * 上传
+   * @param input
+   * @return
+   * @throws IOException
+   */
   @POST
   @Path("upload")
   @Produces(MediaType.APPLICATION_JSON)
@@ -494,6 +554,16 @@ public class RestService extends ResourceService {
         .build();
   }
 
+  /**
+   * 下载文件之前，获取远程服务器上的文件信息
+   * @param id
+   * @param field
+   * @param isImage
+   * @param parentId
+   * @param parentModel
+   * @param fileName
+   * @return
+   */
   @HEAD
   @Path("{id}/{field}/download")
   public javax.ws.rs.core.Response downloadCheck(
@@ -507,6 +577,17 @@ public class RestService extends ResourceService {
     return download(id, field, isImage, parentId, parentModel, fileName, true);
   }
 
+  /**
+   * 下载
+   * @param id
+   * @param field
+   * @param isImage
+   * @param parentId
+   * @param parentModel
+   * @param fileName
+   * @return
+   * @throws IOException
+   */
   @GET
   @Path("{id}/{field}/download")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)

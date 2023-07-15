@@ -118,10 +118,20 @@ public class AppContextListener extends GuiceServletContextListener {
     AppLogger.uninstall();
   }
 
+
+  /**
+   * 模块初始化入口
+   * @param servletContextEvent the ServletContextEvent containing the ServletContext
+   * that is being initialized
+   *
+   */
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
+    //初始化Logger
     this.beforeStart(servletContextEvent);
+    //初始化模块
     super.contextInitialized(servletContextEvent);
+    //配置Cookie和RestEasy
     this.afterStart(servletContextEvent);
   }
 
@@ -132,6 +142,11 @@ public class AppContextListener extends GuiceServletContextListener {
     this.afterStop(servletContextEvent);
   }
 
+
+  /**
+   * 获取AppServletModule
+   * @return
+   */
   @Override
   protected Injector getInjector() {
     return Guice.createInjector(new AppServletModule());

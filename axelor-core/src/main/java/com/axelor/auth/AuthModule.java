@@ -46,6 +46,7 @@ public class AuthModule extends AbstractModule {
     // bind security service
     bind(JpaSecurity.class).toProvider(AuthSecurity.class);
 
+    // 初始化MyShiroModule
     // non-web environment (cli or unit tests)
     if (context == null) {
       install(new MyShiroModule());
@@ -57,6 +58,10 @@ public class AuthModule extends AbstractModule {
     install(new AuthPac4jModule(context));
   }
 
+
+  /**
+   * 继承 ShiroModule，实现自定义AuthRealm
+   */
   static final class MyShiroModule extends ShiroModule {
 
     @Override
